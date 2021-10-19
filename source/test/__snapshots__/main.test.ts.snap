@@ -4,20 +4,12 @@ exports[`Snapshot 1`] = `
 Object {
   "Description": "(SO8021) - Deploy keycloak rds mysql with existing vpc. template version: latest",
   "Mappings": Object {
-    "KeyCloakKeyCloakContainerSerivceBootstrapImageMap1F3D33FC": Object {
-      "aws": Object {
-        "uri": "public.ecr.aws/ubuntu/mysql:latest",
-      },
-      "aws-cn": Object {
-        "uri": "048912060910.dkr.ecr.cn-northwest-1.amazonaws.com.cn/dockerhub/mysql:latest",
-      },
-    },
     "KeyCloakKeyCloakContainerSerivceKeycloakImageMapF79EAEA3": Object {
       "aws": Object {
-        "uri": "jboss/keycloak:12.0.4",
+        "uri": "jboss/keycloak:15.0.2",
       },
       "aws-cn": Object {
-        "uri": "048912060910.dkr.ecr.cn-northwest-1.amazonaws.com.cn/dockerhub/jboss/keycloak:12.0.4",
+        "uri": "048912060910.dkr.ecr.cn-northwest-1.amazonaws.com.cn/dockerhub/jboss/keycloak:15.0.2",
       },
     },
   },
@@ -93,9 +85,17 @@ Object {
     },
     "KeyCloakKeyCloakContainerSerivceEndpointURL9C81E19A": Object {
       "Value": Object {
-        "Fn::GetAtt": Array [
-          "KeyCloakKeyCloakContainerSerivceALBE100B67D",
-          "DNSName",
+        "Fn::Join": Array [
+          "",
+          Array [
+            "https://",
+            Object {
+              "Fn::GetAtt": Array [
+                "KeyCloakKeyCloakContainerSerivceALBE100B67D",
+                "DNSName",
+              ],
+            },
+          ],
         ],
       },
     },
@@ -229,13 +229,16 @@ Object {
   },
   "Resources": Object {
     "KeyCloakDatabaseDBCluster06E9C0E1": Object {
-      "DeletionPolicy": "Delete",
+      "DeletionPolicy": "Retain",
       "Properties": Object {
         "BackupRetentionPeriod": 7,
+        "CopyTagsToSnapshot": true,
         "DBClusterParameterGroupName": "default.aurora-mysql5.7",
         "DBSubnetGroupName": Object {
           "Ref": "KeyCloakDatabaseDBClusterSubnetsE36F1B1B",
         },
+        "DatabaseName": "keycloak",
+        "DeletionProtection": true,
         "Engine": "aurora-mysql",
         "EngineVersion": "5.7.mysql_aurora.2.09.1",
         "MasterUserPassword": Object {
@@ -262,10 +265,10 @@ Object {
         ],
       },
       "Type": "AWS::RDS::DBCluster",
-      "UpdateReplacePolicy": "Delete",
+      "UpdateReplacePolicy": "Retain",
     },
     "KeyCloakDatabaseDBClusterInstance12532FD3D": Object {
-      "DeletionPolicy": "Delete",
+      "DeletionPolicy": "Retain",
       "Properties": Object {
         "DBClusterIdentifier": Object {
           "Ref": "KeyCloakDatabaseDBCluster06E9C0E1",
@@ -289,10 +292,10 @@ Object {
         "PubliclyAccessible": false,
       },
       "Type": "AWS::RDS::DBInstance",
-      "UpdateReplacePolicy": "Delete",
+      "UpdateReplacePolicy": "Retain",
     },
     "KeyCloakDatabaseDBClusterInstance2EE80EFE4": Object {
-      "DeletionPolicy": "Delete",
+      "DeletionPolicy": "Retain",
       "Properties": Object {
         "DBClusterIdentifier": Object {
           "Ref": "KeyCloakDatabaseDBCluster06E9C0E1",
@@ -316,7 +319,7 @@ Object {
         "PubliclyAccessible": false,
       },
       "Type": "AWS::RDS::DBInstance",
-      "UpdateReplacePolicy": "Delete",
+      "UpdateReplacePolicy": "Retain",
     },
     "KeyCloakDatabaseDBClusterSecretAttachment50401C92": Object {
       "Properties": Object {
@@ -421,6 +424,7 @@ Object {
       "Type": "AWS::EC2::SecurityGroupIngress",
     },
     "KeyCloakDatabaseDBClusterSubnetsE36F1B1B": Object {
+      "DeletionPolicy": "Retain",
       "Properties": Object {
         "DBSubnetGroupDescription": "Subnets for DBCluster database",
         "SubnetIds": Array [
@@ -443,6 +447,7 @@ Object {
         ],
       },
       "Type": "AWS::RDS::DBSubnetGroup",
+      "UpdateReplacePolicy": "Retain",
     },
     "KeyCloakKCSecretF8498E5C": Object {
       "Properties": Object {
@@ -591,12 +596,12 @@ Object {
       "Type": "AWS::ECS::Cluster",
     },
     "KeyCloakKeyCloakContainerSerivceLogGroup010F2AAE": Object {
-      "DeletionPolicy": "Delete",
+      "DeletionPolicy": "Retain",
       "Properties": Object {
         "RetentionInDays": 30,
       },
       "Type": "AWS::Logs::LogGroup",
-      "UpdateReplacePolicy": "Delete",
+      "UpdateReplacePolicy": "Retain",
     },
     "KeyCloakKeyCloakContainerSerivceService79D3F427": Object {
       "DependsOn": Array [
@@ -700,6 +705,90 @@ Object {
       },
       "Type": "AWS::EC2::SecurityGroupIngress",
     },
+    "KeyCloakKeyCloakContainerSerivceServiceSecurityGroupfromtestKeyCloakKeyCloakContainerSerivceServiceSecurityGroup346BD4F65760048BE0899": Object {
+      "Properties": Object {
+        "Description": "kc jgroups-tcp-fd",
+        "FromPort": 57600,
+        "GroupId": Object {
+          "Fn::GetAtt": Array [
+            "KeyCloakKeyCloakContainerSerivceServiceSecurityGroup4C80023D",
+            "GroupId",
+          ],
+        },
+        "IpProtocol": "tcp",
+        "SourceSecurityGroupId": Object {
+          "Fn::GetAtt": Array [
+            "KeyCloakKeyCloakContainerSerivceServiceSecurityGroup4C80023D",
+            "GroupId",
+          ],
+        },
+        "ToPort": 57600,
+      },
+      "Type": "AWS::EC2::SecurityGroupIngress",
+    },
+    "KeyCloakKeyCloakContainerSerivceServiceSecurityGroupfromtestKeyCloakKeyCloakContainerSerivceServiceSecurityGroup346BD4F676008254A471": Object {
+      "Properties": Object {
+        "Description": "kc jgroups-tcp",
+        "FromPort": 7600,
+        "GroupId": Object {
+          "Fn::GetAtt": Array [
+            "KeyCloakKeyCloakContainerSerivceServiceSecurityGroup4C80023D",
+            "GroupId",
+          ],
+        },
+        "IpProtocol": "tcp",
+        "SourceSecurityGroupId": Object {
+          "Fn::GetAtt": Array [
+            "KeyCloakKeyCloakContainerSerivceServiceSecurityGroup4C80023D",
+            "GroupId",
+          ],
+        },
+        "ToPort": 7600,
+      },
+      "Type": "AWS::EC2::SecurityGroupIngress",
+    },
+    "KeyCloakKeyCloakContainerSerivceServiceSecurityGroupfromtestKeyCloakKeyCloakContainerSerivceServiceSecurityGroup346BD4F6UDP542001C1FC729": Object {
+      "Properties": Object {
+        "Description": "kc jgroups-udp-fd",
+        "FromPort": 54200,
+        "GroupId": Object {
+          "Fn::GetAtt": Array [
+            "KeyCloakKeyCloakContainerSerivceServiceSecurityGroup4C80023D",
+            "GroupId",
+          ],
+        },
+        "IpProtocol": "udp",
+        "SourceSecurityGroupId": Object {
+          "Fn::GetAtt": Array [
+            "KeyCloakKeyCloakContainerSerivceServiceSecurityGroup4C80023D",
+            "GroupId",
+          ],
+        },
+        "ToPort": 54200,
+      },
+      "Type": "AWS::EC2::SecurityGroupIngress",
+    },
+    "KeyCloakKeyCloakContainerSerivceServiceSecurityGroupfromtestKeyCloakKeyCloakContainerSerivceServiceSecurityGroup346BD4F6UDP5520071778905": Object {
+      "Properties": Object {
+        "Description": "kc jgroups-udp",
+        "FromPort": 55200,
+        "GroupId": Object {
+          "Fn::GetAtt": Array [
+            "KeyCloakKeyCloakContainerSerivceServiceSecurityGroup4C80023D",
+            "GroupId",
+          ],
+        },
+        "IpProtocol": "udp",
+        "SourceSecurityGroupId": Object {
+          "Fn::GetAtt": Array [
+            "KeyCloakKeyCloakContainerSerivceServiceSecurityGroup4C80023D",
+            "GroupId",
+          ],
+        },
+        "ToPort": 55200,
+      },
+      "Type": "AWS::EC2::SecurityGroupIngress",
+    },
     "KeyCloakKeyCloakContainerSerivceServiceTaskCountTarget0EDF86B3": Object {
       "Properties": Object {
         "MaxCapacity": Object {
@@ -769,77 +858,6 @@ Object {
       "Properties": Object {
         "ContainerDefinitions": Array [
           Object {
-            "Command": Array [
-              "sh",
-              "-c",
-              "mysql -u$DB_USER -p$DB_PASSWORD -h$DB_ADDR -e \\"CREATE DATABASE IF NOT EXISTS $DB_NAME\\"",
-            ],
-            "Environment": Array [
-              Object {
-                "Name": "DB_NAME",
-                "Value": "keycloak",
-              },
-              Object {
-                "Name": "DB_USER",
-                "Value": "admin",
-              },
-              Object {
-                "Name": "DB_ADDR",
-                "Value": Object {
-                  "Fn::GetAtt": Array [
-                    "KeyCloakDatabaseDBCluster06E9C0E1",
-                    "Endpoint.Address",
-                  ],
-                },
-              },
-            ],
-            "Essential": false,
-            "Image": Object {
-              "Fn::FindInMap": Array [
-                "KeyCloakKeyCloakContainerSerivceBootstrapImageMap1F3D33FC",
-                Object {
-                  "Ref": "AWS::Partition",
-                },
-                "uri",
-              ],
-            },
-            "LogConfiguration": Object {
-              "LogDriver": "awslogs",
-              "Options": Object {
-                "awslogs-group": Object {
-                  "Ref": "KeyCloakKeyCloakContainerSerivceLogGroup010F2AAE",
-                },
-                "awslogs-region": Object {
-                  "Ref": "AWS::Region",
-                },
-                "awslogs-stream-prefix": "bootstrap",
-              },
-            },
-            "Name": "bootstrap",
-            "Secrets": Array [
-              Object {
-                "Name": "DB_PASSWORD",
-                "ValueFrom": Object {
-                  "Fn::Join": Array [
-                    "",
-                    Array [
-                      Object {
-                        "Ref": "KeyCloakDatabaseDBClusterSecretAttachment50401C92",
-                      },
-                      ":password::",
-                    ],
-                  ],
-                },
-              },
-            ],
-          },
-          Object {
-            "DependsOn": Array [
-              Object {
-                "Condition": "SUCCESS",
-                "ContainerName": "bootstrap",
-              },
-            ],
             "Environment": Array [
               Object {
                 "Name": "DB_ADDR",
@@ -869,6 +887,10 @@ Object {
               Object {
                 "Name": "JDBC_PARAMS",
                 "Value": "useSSL=false",
+              },
+              Object {
+                "Name": "JGROUPS_DISCOVERY_PROTOCOL",
+                "Value": "JDBC_PING",
               },
               Object {
                 "Name": "JAVA_OPTS",
@@ -904,6 +926,22 @@ Object {
               Object {
                 "ContainerPort": 8443,
                 "Protocol": "tcp",
+              },
+              Object {
+                "ContainerPort": 7600,
+                "Protocol": "tcp",
+              },
+              Object {
+                "ContainerPort": 57600,
+                "Protocol": "tcp",
+              },
+              Object {
+                "ContainerPort": 55200,
+                "Protocol": "udp",
+              },
+              Object {
+                "ContainerPort": 54200,
+                "Protocol": "udp",
               },
             ],
             "Secrets": Array [
