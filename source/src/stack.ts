@@ -139,24 +139,41 @@ export class KeycloakStack extends SolutionStack {
     });
     this.addGroupParam({ 'Environment variable': [javaOptsParam] });
 
-    const keycloakVersion = this.makeParam('Keycloak Version', {
+    // const keycloakVersion = this.makeParam('Keycloak Version', {
+    //   type: 'String',
+    //   description: `List of Versions 
+    //     ${KeycloakVersion.V12_0_4}, 
+    //     ${KeycloakVersion.V15_0_0},
+    //     ${KeycloakVersion.V15_0_1},
+    //     ${KeycloakVersion.V15_0_2},
+    //     ${KeycloakVersion.cbV15_0_2}
+    //     `,
+    //   default: "cb.15.0.2",
+    // })
+
+    // this.addGroupParam({ 'Keycloak Version': [keycloakVersion] });
+
+    const singleDbInstance = this.makeParam('Single or Cluster', {
       type: 'String',
-      description: `List of Versions 
-        ${KeycloakVersion.V12_0_4}, 
-        ${KeycloakVersion.V15_0_0},
-        ${KeycloakVersion.V15_0_1},
-        ${KeycloakVersion.V15_0_2},
-        ${KeycloakVersion.cbV15_0_2}
-        `,
-      default: "cb.15.0.2",
+      description: "Whether to use single RDS instance rather than RDS cluster. Not recommended for production.",
+      allowedValues: ["single", "cluster"],
+      default: "single"
     })
 
-    this.addGroupParam({ 'Keycloak Version': [keycloakVersion] });
+    this.addGroupParam({ 'Single or Cluster Database': [singleDbInstance] });
 
+    const createBastion = this.makeParam('Should Create Bastion?', {
+      type: 'String',
+      description: "Whether to create bastion host or not?",
+      allowedValues: ["true", "false"],
+      default: "false"
+    })
 
-
+    this.addGroupParam({ 'Create Bastion [true/false]?': [createBastion] });
 
     new KeyCloak(this, 'KeyCloak', {
+      singleDbInstance: singleDbInstance.valueAsString == "cluster" ? false : true,
+      bastion: createBastion.valueAsString == "true" ? true : false,
       vpc: this._keycloakSettings.vpc,
       publicSubnets: this._keycloakSettings.publicSubnets,
       privateSubnets: this._keycloakSettings.privateSubnets,
@@ -174,7 +191,8 @@ export class KeycloakStack extends SolutionStack {
       env: {
         JAVA_OPTS: javaOptsParam.valueAsString,
       },
-      keycloakVersion: KeycloakVersion.of(keycloakVersion.valueAsString),
+      // keycloakVersion: KeycloakVersion.of(keycloakVersion.valueAsString),
+      keycloakVersion: KeycloakVersion.V15_0_2,
     });
   }
 

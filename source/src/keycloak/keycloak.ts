@@ -539,6 +539,7 @@ export class ContainerService extends cdk.Construct {
         // KEYCLOAK_LOGLEVEL: 'DEBUG',
         JDBC_PARAMS: 'useSSL=false',
         JGROUPS_DISCOVERY_PROTOCOL: 'JDBC_PING',
+        PROXY_ADDRESS_FORWARDING: 'true',
         // We don't need to specify `initialize_sql` string into `JGROUPS_DISCOVERY_PROPERTIES` property,
         // because the default `initialize_sql` is compatible with MySQL. (See: https://github.com/belaban/JGroups/blob/master/src/org/jgroups/protocols/JDBC_PING.java#L55-L60)
         // But you need to specify `initialize_sql` for PostgreSQL, because `varbinary` schema is not supported. (See: https://github.com/keycloak/keycloak-containers/blob/d4ce446dde3026f89f66fa86b58c2d0d6132ce4d/docker-compose-examples/keycloak-postgres-jdbc-ping.yml#L49)
