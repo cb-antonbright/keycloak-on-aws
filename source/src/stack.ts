@@ -1,6 +1,6 @@
 import * as ec2 from '@aws-cdk/aws-ec2';
 import { Construct, Stack, StackProps, CfnParameter, CfnParameterProps, Fn, Aws, Duration } from '@aws-cdk/core';
-import { KeyCloak, KeycloakVersion } from 'cdk-keycloak';
+import { KeyCloak, KeycloakVersion } from './keycloak';
 
 export class SolutionStack extends Stack {
   private _paramGroup: { [grpname: string]: CfnParameter[]} = {}
@@ -139,6 +139,22 @@ export class KeycloakStack extends SolutionStack {
     });
     this.addGroupParam({ 'Environment variable': [javaOptsParam] });
 
+    const keycloakVersion = this.makeParam('Keycloak Version', {
+      type: 'String',
+      description: `List of Versions 
+        ${KeycloakVersion.V12_0_4}, 
+        ${KeycloakVersion.V15_0_0},
+        ${KeycloakVersion.V15_0_1},
+        ${KeycloakVersion.V15_0_2},
+        ${KeycloakVersion.cbV15_0_2}
+        `,
+      default: "cb.15.0.2",
+    })
+
+    this.addGroupParam({ 'Keycloak Version': [keycloakVersion] });
+
+
+
 
     new KeyCloak(this, 'KeyCloak', {
       vpc: this._keycloakSettings.vpc,
@@ -158,7 +174,7 @@ export class KeycloakStack extends SolutionStack {
       env: {
         JAVA_OPTS: javaOptsParam.valueAsString,
       },
-      keycloakVersion: KeycloakVersion.V15_0_2
+      keycloakVersion: KeycloakVersion.of(keycloakVersion.valueAsString),
     });
   }
 
@@ -166,6 +182,7 @@ export class KeycloakStack extends SolutionStack {
 
 
 const INSTANCE_TYPES = [
+  'm5.large',
   'm5.xlarge',
   'm5.2xlarge',
   'm5.4xlarge',

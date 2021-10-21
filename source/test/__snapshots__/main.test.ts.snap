@@ -2,14 +2,34 @@
 
 exports[`Snapshot 1`] = `
 Object {
-  "Description": "(SO8021) - Deploy keycloak rds mysql with existing vpc. template version: latest",
+  "Description": "(SO8021) - Deploy keycloak rds mysql with existing vpc. template version: v1",
   "Mappings": Object {
     "KeyCloakKeyCloakContainerSerivceKeycloakImageMapF79EAEA3": Object {
       "aws": Object {
-        "uri": "jboss/keycloak:15.0.2",
+        "uri": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "441603337042.dkr.ecr.us-east-1.amazonaws.com/cb-keycloak:",
+              Object {
+                "Ref": "KeycloakVersion",
+              },
+            ],
+          ],
+        },
       },
       "aws-cn": Object {
-        "uri": "048912060910.dkr.ecr.cn-northwest-1.amazonaws.com.cn/dockerhub/jboss/keycloak:15.0.2",
+        "uri": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "048912060910.dkr.ecr.cn-northwest-1.amazonaws.com.cn/dockerhub/jboss/keycloak:",
+              Object {
+                "Ref": "KeycloakVersion",
+              },
+            ],
+          ],
+        },
       },
     },
   },
@@ -59,6 +79,14 @@ Object {
           },
           "Parameters": Array [
             "JavaOpts",
+          ],
+        },
+        Object {
+          "Label": Object {
+            "default": "Keycloak Version",
+          },
+          "Parameters": Array [
+            "KeycloakVersion",
           ],
         },
       ],
@@ -118,6 +146,7 @@ Object {
     },
     "DatabaseInstanceType": Object {
       "AllowedValues": Array [
+        "m5.large",
         "m5.xlarge",
         "m5.2xlarge",
         "m5.4xlarge",
@@ -200,6 +229,17 @@ Object {
     },
     "JavaOpts": Object {
       "Description": "JAVA_OPTS environment variable",
+      "Type": "String",
+    },
+    "KeycloakVersion": Object {
+      "Default": "cb.15.0.2",
+      "Description": "List of Versions 
+        [object Object], 
+        [object Object],
+        [object Object],
+        [object Object],
+        [object Object]
+        ",
       "Type": "String",
     },
     "MaxContainers": Object {
@@ -998,7 +1038,7 @@ Object {
           ],
         },
         "Family": "testKeyCloakKeyCloakContainerSerivceTaskDef6BF01E85",
-        "Memory": "30720",
+        "Memory": "16384",
         "NetworkMode": "awsvpc",
         "RequiresCompatibilities": Array [
           "FARGATE",
