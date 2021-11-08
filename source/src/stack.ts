@@ -153,27 +153,29 @@ export class KeycloakStack extends SolutionStack {
 
     // this.addGroupParam({ 'Keycloak Version': [keycloakVersion] });
 
-    const singleDbInstance = this.makeParam('Single or Cluster', {
-      type: 'String',
-      description: "Whether to use single RDS instance rather than RDS cluster. Not recommended for production.",
-      allowedValues: ["single", "cluster"],
-      default: "single"
-    })
+    // const singleDbInstance = this.makeParam('Single or Cluster', {
+    //   type: 'String',
+    //   description: "Whether to use single RDS instance rather than RDS cluster. Not recommended for production.",
+    //   allowedValues: ["single", "cluster"],
+    //   default: "single"
+    // })
 
-    this.addGroupParam({ 'Single or Cluster Database': [singleDbInstance] });
+    // this.addGroupParam({ 'Single or Cluster Database': [singleDbInstance] });
 
-    const createBastion = this.makeParam('Should Create Bastion?', {
-      type: 'String',
-      description: "Whether to create bastion host or not?",
-      allowedValues: ["true", "false"],
-      default: "false"
-    })
+    // const createBastion = this.makeParam('Should Create Bastion?', {
+    //   type: 'String',
+    //   description: "Whether to create bastion host or not?",
+    //   allowedValues: ["true", "false"],
+    //   default: "false"
+    // })
 
-    this.addGroupParam({ 'Create Bastion [true/false]?': [createBastion] });
+    // this.addGroupParam({ 'Create Bastion [true/false]?': [createBastion] });
 
     new KeyCloak(this, 'KeyCloak', {
-      singleDbInstance: singleDbInstance.valueAsString == "cluster" ? false : true,
-      bastion: createBastion.valueAsString == "true" ? true : false,
+      // singleDbInstance: singleDbInstance.valueAsString === "cluster" ? false : true,
+      // bastion: createBastion.valueAsString === "true" ? true : false,
+      singleDbInstance: true,
+      bastion: false,
       vpc: this._keycloakSettings.vpc,
       publicSubnets: this._keycloakSettings.publicSubnets,
       privateSubnets: this._keycloakSettings.privateSubnets,

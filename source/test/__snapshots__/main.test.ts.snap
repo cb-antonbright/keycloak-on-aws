@@ -2,14 +2,14 @@
 
 exports[`Snapshot 1`] = `
 Object {
-  "Description": "(SO8021) - Deploy keycloak rds mysql with existing vpc. template version: v1",
+  "Description": "(SO8021) - Deploy keycloak rds mysql with existing vpc. template version: v2",
   "Mappings": Object {
     "KeyCloakKeyCloakContainerSerivceKeycloakImageMapF79EAEA3": Object {
       "aws": Object {
-        "uri": "441603337042.dkr.ecr.us-east-1.amazonaws.com/cb-keycloak:cb.15.0.2",
+        "uri": "276856091113.dkr.ecr.us-east-2.amazonaws.com/cb-keycloak:15.0.2",
       },
       "aws-cn": Object {
-        "uri": "048912060910.dkr.ecr.cn-northwest-1.amazonaws.com.cn/dockerhub/jboss/keycloak:cb.15.0.2",
+        "uri": "048912060910.dkr.ecr.cn-northwest-1.amazonaws.com.cn/dockerhub/jboss/keycloak:15.0.2",
       },
     },
   },
@@ -59,22 +59,6 @@ Object {
           },
           "Parameters": Array [
             "JavaOpts",
-          ],
-        },
-        Object {
-          "Label": Object {
-            "default": "Single or Cluster Database",
-          },
-          "Parameters": Array [
-            "SingleorCluster",
-          ],
-        },
-        Object {
-          "Label": Object {
-            "default": "Create Bastion [true/false]?",
-          },
-          "Parameters": Array [
-            "ShouldCreateBastion",
           ],
         },
       ],
@@ -238,24 +222,6 @@ Object {
     "PubSubnets": Object {
       "Description": "Public subnets (Choose two)",
       "Type": "List<AWS::EC2::Subnet::Id>",
-    },
-    "ShouldCreateBastion": Object {
-      "AllowedValues": Array [
-        "true",
-        "false",
-      ],
-      "Default": "false",
-      "Description": "Whether to create bastion host or not?",
-      "Type": "String",
-    },
-    "SingleorCluster": Object {
-      "AllowedValues": Array [
-        "single",
-        "cluster",
-      ],
-      "Default": "single",
-      "Description": "Whether to use single RDS instance rather than RDS cluster. Not recommended for production.",
-      "Type": "String",
     },
     "VpcId": Object {
       "Description": "Your VPC Id",
@@ -886,6 +852,10 @@ Object {
               Object {
                 "Name": "JGROUPS_DISCOVERY_PROTOCOL",
                 "Value": "JDBC_PING",
+              },
+              Object {
+                "Name": "PROXY_ADDRESS_FORWARDING",
+                "Value": "true",
               },
               Object {
                 "Name": "JAVA_OPTS",

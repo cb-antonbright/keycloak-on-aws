@@ -81,7 +81,8 @@ interface dockerImageMap {
 }
 
 const KEYCLOAK_DOCKER_IMAGE_URI_MAP: dockerImageMap = {
-  'aws': '441603337042.dkr.ecr.us-east-1.amazonaws.com/cb-keycloak:',
+  // 'aws': '441603337042.dkr.ecr.us-east-1.amazonaws.com/cb-keycloak:',
+  'aws': '276856091113.dkr.ecr.us-east-2.amazonaws.com/cb-keycloak:',
   'aws-cn': '048912060910.dkr.ecr.cn-northwest-1.amazonaws.com.cn/dockerhub/jboss/keycloak:',
   // 'aws-cb': '441603337042.dkr.ecr.us-east-1.amazonaws.com/cb-keycloak:',
 };
